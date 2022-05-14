@@ -62,6 +62,8 @@ Then, create [an access key](https://litestream.io/guides/backblaze/#create-a-us
 flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_KEY="<applicationKey>"
 ```
 
+> Note: If you want to use another storage provider, check litestream's ["Replica Guides"](https://litestream.io/guides/) and adjust config as needed.
+
 ### Deploy to fly
 
 Run `flyctl deploy`. Once successfully deployed, set the application's memory to `512MB` in the fly control panel and wait for the change to be applied.
