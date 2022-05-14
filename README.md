@@ -2,6 +2,10 @@
 
 > 🔖 Run the self-hosted bookmark service [linkding](https://github.com/sissbruecker/linkding) on [fly.io](https://fly.io/). Automatically backup the bookmark database to [B2](https://www.backblaze.com/b2/cloud-storage.html) with [litestream](https://litestream.io/).
 
+### Pricing
+
+Assuming one 512mb VM and a free 3GB fly volume, this setup costs ~$3.20/month. Backups with B2 are free (for the first 10GB, then $0.005 per GB).
+
 ### Install Fly
 
 Follow [the instructions](https://fly.io/docs/getting-started/installing-flyctl/) to install fly's command-line `flyctl`.
@@ -36,6 +40,12 @@ This command creates a `fly.toml` file. Open it and add an `env` section.
   LITESTREAM_REPLICA_BUCKET="<filled_later>"
 ```
 
+Scale memory allocation to `512mb`. The default of `256mb` results in latency issues when background tasks are running.
+
+```sh
+fly scale memory 512
+```
+
 ### Add a persistent volume
 
 Create a [persistent volume](https://fly.io/docs/reference/volumes/). The first `3GB` volume is free on fly. 3GB should be sufficient for most installs, but use your own judgement.
@@ -66,7 +76,11 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
 
 ### Deploy to fly
 
-Run `flyctl deploy`. Once successfully deployed, set the application's memory to `512MB` in the fly control panel and wait for the change to be applied.
+Deploy the application to fly.
+
+```sh
+flyctl deploy
+```
 
 If all is well, you can now access linkding by running `flyctl open`. You should see its login page.
 
@@ -97,6 +111,8 @@ That's it! If you wish, you can now [configure a custom domain for your install]
  - in your B2 bucket, there should be an initial replica of your database.
  - your user data should survive a restart.
 
+<!-- TODO: add section on verifying backups -->
+
 ### Troubleshooting
 
 #### litestream is logging 403 errors
@@ -106,7 +122,3 @@ Check that your B2 secrets and envs are correct.
 #### fly ssh does not connect
 
 Check the output of `flyctl doctor`, every line should be marked as **PASSED**. If `Pinging WireGuard` fails, try `flyctl wireguard reset` and `flyctl agent restart`.
-
-#### linkding is slow or hangs frequently
-
-Scale your application's memory to at least 512MB.
