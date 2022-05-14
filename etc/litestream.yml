@@ -1,0 +1,8 @@
+dbs:
+  - path: $DB_PATH
+    replicas:
+      - type: s3
+        bucket: $LITESTREAM_REPLICA_BUCKET
+        path: $LITESTREAM_REPLICA_PATH
+        endpoint: $LITESTREAM_REPLICA_ENDPOINT
+        force-path-style: true
