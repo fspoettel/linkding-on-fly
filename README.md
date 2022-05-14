@@ -4,9 +4,9 @@
 
 ### Pricing
 
-Assuming one 512mb VM and a free 3GB fly volume, this setup costs ~$3.20/month. Backups with B2 are free (for the first 10GB, then $0.005 per GB).
+Assuming one 512MB VM and a free 3GB fly volume, this setup costs ~$3.20/month. Backups with B2 are free (for the first 10GB, then $0.005 per GB).
 
-### Install Fly
+### Install fly
 
 Follow [the instructions](https://fly.io/docs/getting-started/installing-flyctl/) to install fly's command-line `flyctl`.
 
@@ -18,7 +18,7 @@ flyctl auth login
 
 ### Launch fly application
 
-Launch the fly application. Choose a region close to you. When asked, **do not** setup postgres and **do not** deploy yet.
+Launch the fly application. Choose a region close to you. When asked, **do not** setup Postgres and **do not** deploy yet.
 
 ```sh
 flyctl launch
@@ -31,7 +31,7 @@ This command creates a `fly.toml` file. Open it and add an `env` section.
   # linkding's internal port, should be 8080 on fly.
   LD_SERVER_PORT="8080"
   # Path to linkding's sqlite database.
-  DB_PATH="/etc/linkding/data/db.sqlite3"
+  DB_PATH="/etc/linkding/data/DB.sqlite3"
   # B2 replica path.
   LITESTREAM_REPLICA_PATH="linkding_replica.sqlite3"
   # B2 endpoint.
@@ -40,7 +40,7 @@ This command creates a `fly.toml` file. Open it and add an `env` section.
   LITESTREAM_REPLICA_BUCKET="<filled_later>"
 ```
 
-Scale memory allocation to `512mb`. The default of `256mb` results in latency issues when background tasks are running.
+Scale memory allocation to `512MB`. The default of `256MB` results in latency issues when background tasks are running.
 
 ```sh
 fly scale memory 512
@@ -48,7 +48,7 @@ fly scale memory 512
 
 ### Add a persistent volume
 
-Create a [persistent volume](https://fly.io/docs/reference/volumes/). The first `3GB` volume is free on fly. 3GB should be sufficient for most installs, but use your own judgement.
+Create a [persistent volume](https://fly.io/docs/reference/volumes/). The first `3GB` volume is free on fly. 3GB should be sufficient for most installs.
 
 ```sh
 fly volumes create linkding_data --region <your_region> --size <size_in_gb>
@@ -72,7 +72,7 @@ Then, create [an access key](https://litestream.io/guides/backblaze/#create-a-us
 flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_KEY="<applicationKey>"
 ```
 
-> Note: If you want to use another storage provider, check litestream's ["Replica Guides"](https://litestream.io/guides/) and adjust config as needed.
+> Note: If you want to use another storage provider, check litestream's ["Replica Guides"](https://litestream.io/guides/) and adjust the config as needed.
 
 ### Deploy to fly
 
@@ -86,7 +86,7 @@ If all is well, you can now access linkding by running `flyctl open`. You should
 
 ### Create a linkding root user
 
-If you have never used fly's SSH console before, begin by setting up fly's ssh agent.
+If you have never used fly's SSH console before, begin by setting up fly's ssh-agent.
 
 ```sh
 fly ssh establish
@@ -105,19 +105,48 @@ exit
 
 That's it! If you wish, you can now [configure a custom domain for your install](https://fly.io/docs/app-guides/custom-domains-with-fly/).
 
-### Verifying the install
+### Verify the installation
 
  - you should now be able to log into your linkding instance.
  - in your B2 bucket, there should be an initial replica of your database.
  - your user data should survive a restart.
 
-<!-- TODO: add section on verifying backups -->
+### Verify backups / scale persistent volume
+
+Litestream continuously backs up your database by persisting its WAL to B2 (once per second).
+
+There are two ways to verify these backups:
+ 1. run the docker image locally or on a second VM. Verify the DB restores correctly.
+ 2. swap the fly volume for a new one and verify the DB restores correctly.
+
+We will focus on (2) as it simulates an actual data loss scenario. This procedure can also be used to scale your volume to a different size.
+
+Start by making a manual backup of your data.
+ 1. ssh into the VM and copy the DB to a remote. If only you are using your instance, you can also export bookmarks as HTML.
+ 2. make a snapshot of the B2 bucket.
+
+Now list all fly volumes and note the id of the `linkding_data` volume. Then, delete the volume.
+
+```sh
+flyctl volumes list
+flyctl volumes delete <id>
+```
+
+This will result in a **dead** VM after a few seconds. Now create the volume `linkding_data` again. (see above) Your application should automatically attempt to restart. If not, restart it manually.
+
+When the application starts, you should see the successful restore in the logs.
+
+```
+[info] No database found, attempt to restore from a replica.
+[info] Finished restoring the database.
+[info] Starting litestream & linkding service.
+```
 
 ### Troubleshooting
 
 #### litestream is logging 403 errors
 
-Check that your B2 secrets and envs are correct.
+Check that your B2 secrets and environment variables are correct.
 
 #### fly ssh does not connect
 
