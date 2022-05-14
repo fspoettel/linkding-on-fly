@@ -45,7 +45,7 @@ This command creates a `fly.toml` file. Open it and add an `env` section.
 
 ### Add a persistent volume
 
-Create a [persistent volume](https://fly.io/docs/reference/volumes/). The first `3GB` volume is free on fly. 3GB should be sufficient for most installs.
+Create a [persistent volume](https://fly.io/docs/reference/volumes/). Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"scale persistent volume"_ section below.
 
 ```sh
 fly volumes create linkding_data --region <your_region> --size <size_in_gb>
@@ -116,7 +116,7 @@ There are two ways to verify these backups:
  1. run the docker image locally or on a second VM. Verify the DB restores correctly.
  2. swap the fly volume for a new one and verify the DB restores correctly.
 
-We will focus on (2) as it simulates an actual data loss scenario. This procedure can also be used to scale your volume to a different size.
+We will focus on _2_ as it simulates an actual data loss scenario. This procedure can also be used to scale your volume to a different size.
 
 Start by making a manual backup of your data.
  1. ssh into the VM and copy the DB to a remote. If only you are using your instance, you can also export bookmarks as HTML.
