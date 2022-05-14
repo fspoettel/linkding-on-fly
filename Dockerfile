@@ -12,10 +12,13 @@ FROM sissbruecker/linkding:latest
 COPY --from=builder /usr/local/bin/litestream /usr/local/bin/litestream
 
 # Copy Litestream configuration file.
-COPY ./etc/litestream.yml /etc/litestream.yml
+COPY etc/litestream.yml /etc/litestream.yml
+
+# Copy custom uwsgi. This allows to run with 256MB RAM.
+COPY uwsgi.ini /etc/linkding/uwsgi.ini
 
 # Copy startup script and make it executable.
-COPY ./scripts/run.sh /scripts/run.sh
+COPY scripts/run.sh /scripts/run.sh
 RUN chmod +x /scripts/run.sh
 
 # Litestream spawns linkding's webserver as subprocess.

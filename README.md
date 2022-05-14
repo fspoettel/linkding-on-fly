@@ -4,7 +4,10 @@
 
 ### Pricing
 
-Assuming one 512MB VM and a free 3GB fly volume, this setup costs ~$3.20/month. Backups with B2 are free (for the first 10GB, then $0.005 per GB).
+Assuming one 256MB VM and a free 3GB fly volume, this setup fits within Fly's free tier. [^0] Backups with B2 are free as well. [^1]
+
+[^0]: otherwise the VM is ~$2 per month. $0.15/GB per month for the persistent volume.  
+[^1]: the first 10GB are free, then $0.005 per GB.
 
 ### Install fly
 
@@ -38,12 +41,6 @@ This command creates a `fly.toml` file. Open it and add an `env` section.
   LITESTREAM_REPLICA_ENDPOINT="<filled_later>"
   # B2 bucket name.
   LITESTREAM_REPLICA_BUCKET="<filled_later>"
-```
-
-Scale memory allocation to `512MB`. The default of `256MB` results in latency issues when background tasks are running.
-
-```sh
-fly scale memory 512
 ```
 
 ### Add a persistent volume
