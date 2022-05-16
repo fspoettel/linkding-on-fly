@@ -42,7 +42,7 @@ This command creates a `fly.toml` file. Open it and add an `env` section.
   # linkding's internal port, should be 8080 on fly.
   LD_SERVER_PORT="8080"
   # Path to linkding's sqlite database.
-  DB_PATH="/etc/linkding/data/DB.sqlite3"
+  DB_PATH="/etc/linkding/data/db.sqlite3"
   # B2 replica path.
   LITESTREAM_REPLICA_PATH="linkding_replica.sqlite3"
   # B2 endpoint.
