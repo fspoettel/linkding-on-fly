@@ -1,8 +1,10 @@
-FROM alpine:3.14 as builder
+FROM alpine:3.17 as builder
+
+EXPOSE 8080
 
 # Download the static build of Litestream directly into the path & make it executable.
 # This is done in the builder and copied as the chmod doubles the size.
-ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.8/litestream-v0.3.8-linux-amd64-static.tar.gz /tmp/litestream.tar.gz
+ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.9/litestream-v0.3.9-linux-amd64-static.tar.gz /tmp/litestream.tar.gz
 RUN tar -C /usr/local/bin -xzf /tmp/litestream.tar.gz
 
 # Pull in latest linkding docker image.
