@@ -6,7 +6,7 @@
 
 Assuming one 256MB VM and a 3GB volume, this setup fits within Fly's free tier. [^0] Backups with B2 are free as well. [^1]
 
-[^0]: otherwise the VM is ~$2 per month. $0.15/GB per month for the persistent volume.  
+[^0]: otherwise the VM is ~$2 per month. $0.15/GB per month for the persistent volume.
 [^1]: the first 10GB are free, then $0.005 per GB.
 
 ### Prerequisites
@@ -63,8 +63,8 @@ Attach the persistent volume to the container by adding a `mounts` section to `f
 
 ```toml
 [mounts]
-source="linkding_data"
-destination="/etc/linkding/data"
+  source="linkding_data"
+  destination="/etc/linkding/data"
 ```
 
 ### Configure litestream backups
@@ -79,6 +79,14 @@ Then, create [an access key](https://litestream.io/guides/backblaze/#create-a-us
 flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_KEY="<applicationKey>"
 ```
 
+### Create a linkding superuser
+
+You can create the linkding superuser prior to deployment by adding the following to fly's secret store:
+
+```sh
+flyctl secrets set LD_SUPERUSER_NAME="<username>" LD_SUPERUSER_PASSWORD="<password>"
+```
+
 ### Deploy to fly
 
 Deploy the application to fly.
@@ -88,25 +96,6 @@ flyctl deploy
 ```
 
 If all is well, you can now access linkding by running `flyctl open`. You should see its login page.
-
-### Create a linkding superuser
-
-If you have never used fly's SSH console before, begin by setting up fly's ssh-agent.
-
-```sh
-flyctl ssh establish
-
-# use agent if possible, otherwise follow on-screen instructions.
-flyctl ssh issue --agent
-```
-
-Then, run `flyctl ssh console` to get an interactive shell in your running container. You can now create a superuser by running the `createsuperuser` command and entering a password.
-
-```sh
-cd /etc/linkding
-python manage.py createsuperuser --username=<your_username> --email=<your_email>
-exit
-```
 
 That's it! You can now log into your linkding installation and start using it.
 
@@ -167,3 +156,22 @@ either:
 
  - specify a version number in the [Dockerfile](https://github.com/fspoettel/linkding-on-fly/blob/master/Dockerfile#L9)
  - run `flyctl deploy` with the `--no-cache` option
+
+#### Create a linkding superuser manually
+
+If you have never used fly's SSH console before, begin by setting up fly's ssh-agent.
+
+```sh
+flyctl ssh establish
+
+# use agent if possible, otherwise follow on-screen instructions.
+flyctl ssh issue --agent
+```
+
+Then, run `flyctl ssh console` to get an interactive shell in your running container. You can now create a superuser by running the `createsuperuser` command and entering a password.
+
+```sh
+cd /etc/linkding
+python manage.py createsuperuser --username=<your_username> --email=<your_email>
+exit
+```
