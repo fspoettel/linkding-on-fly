@@ -105,7 +105,7 @@ We will focus on _2_ as it simulates an actual data loss scenario. This procedur
 
 Start by making a manual backup of your data:
 
-1. Ssh into the VM and copy the DB to a remote. If only you are using your instance, you can also export bookmarks as HTML.
+1. SSH into the VM and copy the DB to a remote. If only you are using your instance, you can also export bookmarks as HTML.
 2. Make a snapshot of the B2 bucket in the B2 admin panel.
 
 Now list all fly volumes and note the id of the `linkding_data` volume. Then, delete the volume:
