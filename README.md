@@ -75,6 +75,8 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
 7. Deploy `linkding` to fly:
 
     > ℹ️ When asked, **do not** setup Postgres or Redis.
+    >
+    > ℹ️ The [Dockerfile](Dockerfile) contains overridable build arguments: `ALPINE_IMAGE_TAG`, `LINKDING_IMAGE_TAG` and `LITESTREAM_VERSION` which can overridden by passing them to `flyctl deploy` like `--build-arg LINKDING_IMAGE_TAG=v0.3.9` etc.
 
     ```sh
     flyctl deploy
