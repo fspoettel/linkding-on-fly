@@ -45,7 +45,7 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
 
 3. Create a [persistent volume](https://fly.io/docs/reference/volumes/) to store the `linkding` application data:
 
-    > Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"Verify Backups / Scale Persistent Volume"_ section below.
+    > ℹ️ Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"Verify Backups / Scale Persistent Volume"_ section below.
 
     ```sh
     # List available regions via: flyctl platform regions
@@ -74,15 +74,13 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
 
 7. Deploy `linkding` to fly:
 
-    > When asked, **do not** setup Postgres or Redis.
+    > ℹ️ When asked, **do not** setup Postgres or Redis.
 
     ```sh
     flyctl deploy
     ```
 
-If all goes well, you can now access `linkding` by running `flyctl open`. You should see the `linkding` login page.
-
-That's it! 🚀 You can now log into your `linkding` installation and start using it.
+That's it! 🚀 - If all goes well, you can now access `linkding` by running `flyctl open`. You should see the `linkding` login page and be able to log in with the superuser credentials you set in step 4.
 
 If you wish, you can [configure a custom domain for your install](https://fly.io/docs/app-guides/custom-domains-with-fly/).
 
