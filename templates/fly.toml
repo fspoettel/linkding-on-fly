@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for ${APP_NAME} on ${DATE}
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "${APP_NAME}"
+# https://fly.io/docs/reference/regions/#fly-io-regions
+primary_region = "${PRIMARY_REGION}"
+
+[env]
+  DB_PATH = "/etc/linkding/data/db.sqlite3"
+  LD_SERVER_PORT = "8080"
+  LITESTREAM_REPLICA_PATH = "linkding_replica.sqlite3"
+  # Backblaze B2 bucket name
+  LITESTREAM_REPLICA_BUCKET = "${LITESTREAM_REPLICA_BUCKET}"
+  # Backblaze B2 bucket endpoint
+  LITESTREAM_REPLICA_ENDPOINT = "${LITESTREAM_REPLICA_ENDPOINT}"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+
+[mounts]
+  source="linkding_data"
+  destination="/etc/linkding/data"
