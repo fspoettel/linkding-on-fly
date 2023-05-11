@@ -1,10 +1,9 @@
-# Declare args
 ARG ALPINE_IMAGE_TAG=3.14
 ARG LINKDING_IMAGE_TAG=latest
-ARG LITESTREAM_VERSION=v0.3.8
 
 FROM docker.io/alpine:$ALPINE_IMAGE_TAG as builder
 
+ARG LITESTREAM_VERSION=v0.3.8
 # Download the static build of Litestream directly into the path & make it executable.
 # This is done in the builder and copied as the chmod doubles the size.
 ADD https://github.com/benbjohnson/litestream/releases/download/$LITESTREAM_VERSION/litestream-$LITESTREAM_VERSION-linux-amd64-static.tar.gz /tmp/litestream.tar.gz
