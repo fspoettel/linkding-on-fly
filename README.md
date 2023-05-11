@@ -137,9 +137,7 @@ Check the output of `flyctl doctor`, every line should be marked as **PASSED**. 
 
 #### Fly does not pull in the latest version of linkding
 
-Either:
-
-- Specify a version number in the [Dockerfile](https://github.com/fspoettel/linkding-on-fly/blob/master/Dockerfile#L9).
+- Override the [Dockerfile](Dockerfile#L2) build argument `LINKDING_IMAGE_TAG`: `flyctl deploy --build-arg LINKDING_IMAGE_TAG=<tag>`
 - Run `flyctl deploy` with the `--no-cache` option.
 
 #### Create a linkding superuser manually
