@@ -96,7 +96,7 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
     flyctl launch
     ```
 
-    Next, open the `fly.toml` and add the following `env` and `mounts` sections:
+    Next, open the `fly.toml` and add the following `env` and `mounts` sections (populating `LITESTREAM_REPLICA_ENDPOINT` and `LITESTREAM_REPLICA_BUCKET`):
 
     ```
     [env]
@@ -107,9 +107,9 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
       # B2 replica path.
       LITESTREAM_REPLICA_PATH="linkding_replica.sqlite3"
       # B2 endpoint.
-      LITESTREAM_REPLICA_ENDPOINT="<filled_later>"
+      LITESTREAM_REPLICA_ENDPOINT="<Backblaze B2 endpoint>"
       # B2 bucket name.
-      LITESTREAM_REPLICA_BUCKET="<filled_later>"
+      LITESTREAM_REPLICA_BUCKET="<Backblaze B2 bucket name>"
 
     [mounts]
       source="linkding_data"
