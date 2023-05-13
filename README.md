@@ -98,7 +98,7 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
 
     Next, open the `fly.toml` and add the following `env` and `mounts` sections (populating `LITESTREAM_REPLICA_ENDPOINT` and `LITESTREAM_REPLICA_BUCKET`):
 
-    ```
+    ```toml
     [env]
       # linkding's internal port, should be 8080 on fly.
       LD_SERVER_PORT="8080"
