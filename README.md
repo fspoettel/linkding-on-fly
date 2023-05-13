@@ -17,11 +17,17 @@ Assuming one 256MB VM and a 3GB volume, this setup fits within Fly's free tier. 
 
 [^2]: https://fly.io/docs/getting-started/installing-flyctl/
 
+Instructions below assume that you have cloned this repository to your local computer:
+
+```sh
+git clone https://github.com/fspoettel/linkding-on-fly.git && cd linkding-on-fly
+```
+
 #### Litestream - Create Backblaze B2 Bucket and Application Key
 
 > ℹ️ If you want to use another storage provider, check litestream's ["Replica Guides"](https://litestream.io/guides/#replica-guides) section and adjust the config as needed.
 
-Log into [Backblaze B2](https://secure.backblaze.com/user_signin.htm) and [create a bucket](https://litestream.io/guides/backblaze/#create-a-bucket). Once created, you will see the bucket's name and endpoint. You will use these later to populate `LITESTREAM_REPLICA_BUCKET` and `LITESTREAM_REPLICA_ENDPOINT` in the `.env` file.
+Log into [Backblaze B2](https://secure.backblaze.com/user_signin.htm) and [create a bucket](https://litestream.io/guides/backblaze/#create-a-bucket). Once created, you will see the bucket's name and endpoint. You will use these later to populate `LITESTREAM_REPLICA_BUCKET` and `LITESTREAM_REPLICA_ENDPOINT` in the `fly.toml` configuration.
 
 Next, create [an application key](https://litestream.io/guides/backblaze/#create-a-user) for the bucket. Once created, you will see the `keyID` and `applicationKey`. Add these to Fly's secret store:
 
@@ -31,19 +37,13 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
 
 ### Usage
 
-1. Clone the repository:
-
-    ```sh
-    git clone https://github.com/fspoettel/linkding-on-fly.git && cd linkding-on-fly
-    ```
-
-2. Login to [`flyctl`](https://fly.io/docs/getting-started/log-in-to-fly/):
+1. Login to [`flyctl`](https://fly.io/docs/getting-started/log-in-to-fly/):
 
     ```sh
     flyctl auth login
     ```
 
-3. Create a [persistent volume](https://fly.io/docs/reference/volumes/) to store the `linkding` application data:
+2. Create a [persistent volume](https://fly.io/docs/reference/volumes/) to store the `linkding` application data:
 
     > ℹ️ Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"Verify Backups / Scale Persistent Volume"_ section below.
 
@@ -52,13 +52,13 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
     flyctl volumes create linkding_data --region <region code> --size 1
     ```
 
-4. Add the `linkding` superuser credentials to fly's secret store:
+3. Add the `linkding` superuser credentials to fly's secret store:
 
     ```sh
     flyctl secrets set LD_SUPERUSER_NAME="<username>" LD_SUPERUSER_PASSWORD="<password>"
     ```
 
-5. Create the [`fly.toml`](https://fly.io/docs/reference/configuration/):
+4. Create the [`fly.toml`](https://fly.io/docs/reference/configuration/):
 
     <details>
     <summary>Generating from Template</summary>
@@ -86,7 +86,7 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
         envsubst < templates/fly.toml > fly.toml
         ```
 
-    4. Proceed to step 6.
+    4. Proceed to step 5.
     </details>
 
     > ℹ️ When asked, **do not** setup Postgres or Redis.
@@ -116,7 +116,7 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
       destination="/etc/linkding/data"
     ```
 
-6. Deploy `linkding` to fly:
+5. Deploy `linkding` to fly:
 
     > ℹ️ When asked, **do not** setup Postgres or Redis.
     >
