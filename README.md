@@ -58,21 +58,65 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
     flyctl secrets set LD_SUPERUSER_NAME="<username>" LD_SUPERUSER_PASSWORD="<password>"
     ```
 
-5. Copy the [.env.sample](.env.sample) file to `.env`, fill in the values and source them:
+5. Create the [`fly.toml`](https://fly.io/docs/reference/configuration/):
 
-    ```sh
-    cp .env.sample .env
-    # vim .env
-    source .env
+    <details>
+    <summary>Generating from Template</summary>
+
+    You can generate the `fly.toml` from the [template](templates/fly.toml) provided in this repository.
+
+    1. Install [`envsubst`](https://www.gnu.org/software/gettext/manual/html_node/envsubst-Invocation.html) if you don't have it already:
+
+        ```sh
+        # macOS
+        brew install gettext
+        ```
+
+    2. Copy the [.env.sample](.env.sample) file to `.env`, fill in the values and source them:
+
+        ```sh
+        cp .env.sample .env
+        # vim .env
+        source .env
+        ```
+
+    3. Generate the `fly.toml` from the template:
+
+        ```sh
+        envsubst < templates/fly.toml > fly.toml
+        ```
+
+    4. Proceed to step 6.
+    </details>
+
+    > ℹ️ When asked, **do not** setup Postgres or Redis.
+
+    ```
+    # Generate the initial fly.toml
+    flyctl launch
     ```
 
-6. Create the [`fly.toml`](https://fly.io/docs/reference/configuration/) from the [template](templates/fly.toml):
+    Next, open the `fly.toml` and add the following `env` and `mounts` sections:
 
-    ```sh
-    envsubst < templates/fly.toml > fly.toml
+    ```
+    [env]
+      # linkding's internal port, should be 8080 on fly.
+      LD_SERVER_PORT="8080"
+      # Path to linkding's sqlite database.
+      DB_PATH="/etc/linkding/data/db.sqlite3"
+      # B2 replica path.
+      LITESTREAM_REPLICA_PATH="linkding_replica.sqlite3"
+      # B2 endpoint.
+      LITESTREAM_REPLICA_ENDPOINT="<filled_later>"
+      # B2 bucket name.
+      LITESTREAM_REPLICA_BUCKET="<filled_later>"
+
+    [mounts]
+      source="linkding_data"
+      destination="/etc/linkding/data"
     ```
 
-7. Deploy `linkding` to fly:
+6. Deploy `linkding` to fly:
 
     > ℹ️ When asked, **do not** setup Postgres or Redis.
     >
