@@ -25,8 +25,6 @@ git clone https://github.com/fspoettel/linkding-on-fly.git && cd linkding-on-fly
 
 #### Litestream - Create Backblaze B2 Bucket and Application Key
 
-> ℹ️ If you want to use another storage provider, check litestream's ["Replica Guides"](https://litestream.io/guides/#replica-guides) section and adjust the config as needed.
-
 Log into [Backblaze B2](https://secure.backblaze.com/user_signin.htm) and [create a bucket](https://litestream.io/guides/backblaze/#create-a-bucket). Once created, you will see the bucket's name and endpoint. You will use these later to populate `LITESTREAM_REPLICA_BUCKET` and `LITESTREAM_REPLICA_ENDPOINT` in the `fly.toml` configuration.
 
 Next, create [an application key](https://litestream.io/guides/backblaze/#create-a-user) for the bucket. Once created, you will see the `keyID` and `applicationKey`. Add these to Fly's secret store:
@@ -34,6 +32,9 @@ Next, create [an application key](https://litestream.io/guides/backblaze/#create
 ```sh
 flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_KEY="<applicationKey>"
 ```
+
+> **Note**  
+> If you want to use another storage provider, check litestream's ["Replica Guides"](https://litestream.io/guides/#replica-guides) section and adjust the config as needed.
 
 ### Usage
 
@@ -45,12 +46,13 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
 
 2. Create a [persistent volume](https://fly.io/docs/reference/volumes/) to store the `linkding` application data:
 
-    > ℹ️ Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"Verify Backups / Scale Persistent Volume"_ section below.
-
     ```sh
     # List available regions via: flyctl platform regions
     flyctl volumes create linkding_data --region <region code> --size 1
     ```
+
+    > **Note**  
+    > Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"Verify Backups / Scale Persistent Volume"_ section below.
 
 3. Add the `linkding` superuser credentials to fly's secret store:
 
@@ -59,9 +61,8 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
     ```
 
 4. Create the [`fly.toml`](https://fly.io/docs/reference/configuration/):
-
     <details>
-    <summary>Generating from Template</summary>
+    <summary>Alternative: Generating from template</summary>
 
     You can generate the `fly.toml` from the [template](templates/fly.toml) provided in this repository.
 
@@ -89,10 +90,9 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
     4. Proceed to step 5.
     </details>
 
-    > ℹ️ When asked, **do not** setup Postgres or Redis.
-
-    ```
+    ```sh
     # Generate the initial fly.toml
+    # When asked, don't setup Postgres or Redis.
     flyctl launch
     ```
 
@@ -118,14 +118,14 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
 
 5. Deploy `linkding` to fly:
 
-    > ℹ️ When asked, **do not** setup Postgres or Redis.
-    >
-    > ℹ️ The [Dockerfile](Dockerfile) contains overridable build arguments: `ALPINE_IMAGE_TAG`, `LINKDING_IMAGE_TAG` and `LITESTREAM_VERSION` which can overridden by passing them to `flyctl deploy` like `--build-arg LITESTREAM_VERSION=v0.3.9` etc.
-
     ```sh
     flyctl deploy
     ```
 
+    > **Note**  
+    > The [Dockerfile](Dockerfile) contains overridable build arguments: `ALPINE_IMAGE_TAG`, `LINKDING_IMAGE_TAG` and `LITESTREAM_VERSION` which can overridden by passing them to `flyctl deploy` like `--build-arg LITESTREAM_VERSION=v0.3.9` etc.
+
+    
 That's it! 🚀 - If all goes well, you can now access `linkding` by running `flyctl open`. You should see the `linkding` login page and be able to log in with the superuser credentials you set in step 4.
 
 If you wish, you can [configure a custom domain for your install](https://fly.io/docs/app-guides/custom-domains-with-fly/).
