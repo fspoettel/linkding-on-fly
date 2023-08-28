@@ -27,11 +27,9 @@ git clone https://github.com/fspoettel/linkding-on-fly.git && cd linkding-on-fly
 
 Log into [Backblaze B2](https://secure.backblaze.com/user_signin.htm) and [create a bucket](https://litestream.io/guides/backblaze/#create-a-bucket). Once created, you will see the bucket's name and endpoint. You will use these later to populate `LITESTREAM_REPLICA_BUCKET` and `LITESTREAM_REPLICA_ENDPOINT` in the `fly.toml` configuration.
 
-Next, create [an application key](https://litestream.io/guides/backblaze/#create-a-user) for the bucket. Once created, you will see the `keyID` and `applicationKey`. Add these to Fly's secret store:
+Next, create [an application key](https://litestream.io/guides/backblaze/#create-a-user) for the bucket. Once created, you will see the `keyID` and `applicationKey`. You will add these later to Fly's secret store, save them for step 3 below.
 
-```sh
-flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_KEY="<applicationKey>"
-```
+
 
 > **Note**  
 > If you want to use another storage provider, check litestream's ["Replica Guides"](https://litestream.io/guides/#replica-guides) section and adjust the config as needed.
@@ -44,23 +42,7 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
     flyctl auth login
     ```
 
-2. Create a [persistent volume](https://fly.io/docs/reference/volumes/) to store the `linkding` application data:
-
-    ```sh
-    # List available regions via: flyctl platform regions
-    flyctl volumes create linkding_data --region <region code> --size 1
-    ```
-
-    > **Note**  
-    > Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"Verify Backups / Scale Persistent Volume"_ section below.
-
-3. Add the `linkding` superuser credentials to fly's secret store:
-
-    ```sh
-    flyctl secrets set LD_SUPERUSER_NAME="<username>" LD_SUPERUSER_PASSWORD="<password>"
-    ```
-
-4. Create the [`fly.toml`](https://fly.io/docs/reference/configuration/):
+2. Generate fly app and create the [`fly.toml`](https://fly.io/docs/reference/configuration/):
     <details>
     <summary>Alternative: Generating from template</summary>
 
@@ -87,7 +69,7 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
         envsubst < templates/fly.toml > fly.toml
         ```
 
-    4. Proceed to step 5.
+    4. Proceed to step 3.
     </details>
 
     ```sh
@@ -116,14 +98,36 @@ flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_K
       destination="/etc/linkding/data"
     ```
 
-5. Deploy `linkding` to fly:
+3. Add the Backblaze application key to fly's secret store
+
+    ```sh
+    flyctl secrets set LITESTREAM_ACCESS_KEY_ID="<keyId>" LITESTREAM_SECRET_ACCESS_KEY="<applicationKey>"
+    ```
+
+4. Create a [persistent volume](https://fly.io/docs/reference/volumes/) to store the `linkding` application data:
+
+    ```sh
+    # List available regions via: flyctl platform regions
+    flyctl volumes create linkding_data --region <region code> --size 1
+    ```
+
+    > **Note**  
+    > Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"Verify Backups / Scale Persistent Volume"_ section below.
+
+5. Add the `linkding` superuser credentials to fly's secret store:
+
+    ```sh
+    flyctl secrets set LD_SUPERUSER_NAME="<username>" LD_SUPERUSER_PASSWORD="<password>"
+    ```
+
+6. Deploy `linkding` to fly:
 
     ```sh
     flyctl deploy
     ```
 
     > **Note**  
-    > The [Dockerfile](Dockerfile) contains overridable build arguments: `ALPINE_IMAGE_TAG`, `LINKDING_IMAGE_TAG` and `LITESTREAM_VERSION` which can overridden by passing them to `flyctl deploy` like `--build-arg LITESTREAM_VERSION=v0.3.9` etc.
+    > The [Dockerfile](Dockerfile) contains overridable build arguments: `ALPINE_IMAGE_TAG`, `LINKDING_IMAGE_TAG` and `LITESTREAM_VERSION` which can overridden by passing them to `flyctl deploy` like `--build-arg LITESTREAM_VERSION=v0.3.11` etc.
 
     
 That's it! 🚀 - If all goes well, you can now access `linkding` by running `flyctl open`. You should see the `linkding` login page and be able to log in with the superuser credentials you set in step 4.
