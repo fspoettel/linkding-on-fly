@@ -130,7 +130,7 @@ Next, create [an application key](https://litestream.io/guides/backblaze/#create
     > The [Dockerfile](Dockerfile) contains overridable build arguments: `ALPINE_IMAGE_TAG`, `LINKDING_IMAGE_TAG` and `LITESTREAM_VERSION` which can overridden by passing them to `flyctl deploy` like `--build-arg LITESTREAM_VERSION=v0.3.11` etc.
 
     
-That's it! 🚀 - If all goes well, you can now access `linkding` by running `flyctl open`. You should see the `linkding` login page and be able to log in with the superuser credentials you set in step 4.
+That's it! 🚀 - If all goes well, you can now access `linkding` by running `flyctl open`. You should see the `linkding` login page and be able to log in with the superuser credentials you set in step 5.
 
 If you wish, you can [configure a custom domain for your install](https://fly.io/docs/app-guides/custom-domains-with-fly/).
 
