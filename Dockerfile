@@ -3,10 +3,10 @@ ARG LINKDING_IMAGE_TAG=latest
 
 FROM docker.io/alpine:$ALPINE_IMAGE_TAG as builder
 
-ARG LITESTREAM_VERSION=v0.3.8
+ARG LITESTREAM_VERSION=v0.3.11
 # Download the static build of Litestream directly into the path & make it executable.
 # This is done in the builder and copied as the chmod doubles the size.
-ADD https://github.com/benbjohnson/litestream/releases/download/$LITESTREAM_VERSION/litestream-$LITESTREAM_VERSION-linux-amd64-static.tar.gz /tmp/litestream.tar.gz
+ADD https://github.com/benbjohnson/litestream/releases/download/$LITESTREAM_VERSION/litestream-$LITESTREAM_VERSION-linux-amd64.tar.gz /tmp/litestream.tar.gz
 RUN tar -C /usr/local/bin -xzf /tmp/litestream.tar.gz
 
 # Pull linkding docker image.
