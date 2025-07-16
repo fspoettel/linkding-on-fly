@@ -108,13 +108,13 @@ Next, create [an application key](https://litestream.io/guides/backblaze/#create
 
     ```sh
     # List available regions via: flyctl platform regions
-    flyctl volumes create linkding_data --region <region code> --size 1
+    flyctl volume create linkding_data --region <region code> --size 1
     ```
 
     > **Note**  
     > Fly's free tier includes `3GB` of storage across your VMs. Since `linkding` is very light on storage, a `1GB` volume will be more than enough for most use cases. It's possible to change volume size later. A how-to can be found in the _"Verify Backups / Scale Persistent Volume"_ section below.
 
-5. Add the `linkding` superuser credentials to fly's secret store:
+5. Add the `linkding` superuser credentials you'll want to use with the deployed app to fly's secret store:
 
     ```sh
     flyctl secrets set LD_SUPERUSER_NAME="<username>" LD_SUPERUSER_PASSWORD="<password>"
