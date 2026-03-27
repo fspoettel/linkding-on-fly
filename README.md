@@ -4,10 +4,7 @@
 
 ### Pricing
 
-Assuming one 256MB VM and a 3GB volume, this setup fits within Fly's free tier. [^0] Backups with Backblaze B2 are free as well. [^1]
-
-[^0]: Otherwise the VM is ~$2 per month. $0.15/GB per month for the persistent volume.
-[^1]: The first 10GB are free, then $0.005 per GB.
+Assuming one 512MB VM and a 1GB volume, this setup should fit within a $5/month Fly waiver. [^0] Backups with Backblaze B2 are free as well. [^1]
 
 ### Prerequisites
 
@@ -43,39 +40,10 @@ Next, create [an application key](https://litestream.io/guides/backblaze/#create
     ```
 
 2. Generate fly app and create the [`fly.toml`](https://fly.io/docs/reference/configuration/):
-    <details>
-    <summary>Alternative: Generating from template</summary>
-
-    You can generate the `fly.toml` from the [template](templates/fly.toml) provided in this repository.
-
-    1. Install [`envsubst`](https://www.gnu.org/software/gettext/manual/html_node/envsubst-Invocation.html) if you don't have it already:
-
-        ```sh
-        # macOS
-        brew install gettext
-        ```
-
-    2. Copy the [.env.sample](.env.sample) file to `.env`, fill in the values and source them:
-
-        ```sh
-        cp .env.sample .env
-        # vim .env
-        source .env
-        ```
-
-    3. Generate the `fly.toml` from the template:
-
-        ```sh
-        envsubst < templates/fly.toml > fly.toml
-        ```
-
-    4. Proceed to step 3.
-    </details>
-
     ```sh
     # Generate the initial fly.toml
     # When asked, don't setup Postgres or Redis.
-    flyctl launch
+    flyctl launch --no-deploy
     ```
 
     Next, open the `fly.toml` and add the following `env` and `mounts` sections (populating `LITESTREAM_REPLICA_ENDPOINT` and `LITESTREAM_REPLICA_BUCKET`):
@@ -206,3 +174,6 @@ cd /etc/linkding
 python manage.py createsuperuser --username=<your_username> --email=<your_email>
 exit
 ```
+
+[^0]: Based on Fly's current pricing, a shared-cpu-1x 512MB machine is roughly $3.2-$4.2 per month depending on region, plus about $0.15/GB per month for the persistent volume.
+[^1]: The first 10GB are free, then $0.005 per GB.
